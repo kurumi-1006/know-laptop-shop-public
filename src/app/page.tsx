@@ -19,8 +19,8 @@ import {
   TruckIcon,
 } from 'lucide-react';
 import type { Metadata } from 'next';
-import { cacheLife, cacheTag } from 'next/cache';
 import Link from 'next/link';
+import { connection } from 'next/server';
 import { Suspense } from 'react';
 
 const categories = [
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      {          }
+      {}
       <section className="border-b bg-linear-to-b from-muted/30 to-transparent">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:py-24">
           <div>
@@ -113,7 +113,7 @@ export default function Home() {
         </div>
       </section>
 
-      {                }
+      {}
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6" id="categories">
         <div className="flex items-end justify-between gap-4">
           <div>
@@ -153,7 +153,7 @@ export default function Home() {
       </Suspense>
       <RecommendationSection />
 
-      {              }
+      {}
       <section className="border-y bg-muted/20">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-3 sm:px-6">
           {features.map(({ icon, title, description }) => (
@@ -170,7 +170,7 @@ export default function Home() {
         </div>
       </section>
 
-      {         }
+      {}
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="overflow-hidden rounded-2xl border bg-linear-to-br from-primary/5 to-card p-8 text-center shadow-sm sm:p-12">
           <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
@@ -226,9 +226,7 @@ function FeaturedProductsSkeleton() {
 }
 
 async function FeaturedProducts() {
-  'use cache';
-  cacheLife('hours');
-  cacheTag('catalog:featured');
+  await connection();
 
   const products = await ProductFacade.getFeaturedProducts(FEATURED_PRODUCT_COUNT);
 

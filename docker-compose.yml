@@ -1,0 +1,100 @@
+name: know-laptop-shop
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-know}
+      POSTGRES_USER: ${POSTGRES_USER:-know}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-know_local_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-know} -d ${POSTGRES_DB:-know}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  migrate:
+    build:
+      context: .
+      target: tools
+    env_file:
+      - path: .env
+        required: false
+    environment: &app-environment
+      DATABASE_URL: postgresql://${POSTGRES_USER:-know}:${POSTGRES_PASSWORD:-know_local_password}@db:5432/${POSTGRES_DB:-know}
+      DIRECT_URL: postgresql://${POSTGRES_USER:-know}:${POSTGRES_PASSWORD:-know_local_password}@db:5432/${POSTGRES_DB:-know}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-docker-local-secret-change-before-production}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-docker-local-google-client}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-docker-local-google-secret}
+      SMTP_USER: ${SMTP_USER:-docker@example.com}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-docker-local-smtp-password}
+      EMAIL_FROM: ${EMAIL_FROM:-Know <docker@example.com>}
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-https://docker-build.supabase.co}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-docker-build-anon-key}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-v4-flash}
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
+      AI_TRACE_ENABLED: ${AI_TRACE_ENABLED:-false}
+      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:-docker-build-cloud}
+    command: ["pnpm", "exec", "prisma", "db", "push"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  seed:
+    build:
+      context: .
+      target: tools
+    profiles: ["seed"]
+    env_file:
+      - path: .env
+        required: false
+    environment: *app-environment
+    command: ["pnpm", "exec", "tsx", "src/prisma/seed.ts"]
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      target: runner
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-https://docker-build.supabase.co}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-docker-build-anon-key}
+        NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:-docker-build-cloud}
+    env_file:
+      - path: .env
+        required: false
+    restart: unless-stopped
+    environment: *app-environment
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres_data:
