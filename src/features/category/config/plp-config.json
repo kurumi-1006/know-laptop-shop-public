@@ -1,0 +1,133 @@
+{
+  "default": {
+    "sections": [
+      { "type": "banner", "enabled": false, "sortOrder": 1 },
+      { "type": "featured_brands", "enabled": true, "sortOrder": 2 },
+      { "type": "trending_filters", "enabled": true, "sortOrder": 3 },
+      { "type": "product_listing", "enabled": true, "sortOrder": 4 }
+    ],
+    "banners": [
+      {
+        "imageUrl": "https://placehold.co/1920x600/0f172a/ffffff?text=KNOW+LAPTOP+STORE",
+        "title": "Chào mừng bạn đến với Know Laptop",
+        "subtitle": "Nơi cung cấp laptop chính hãng giá tốt nhất thị trường",
+        "linkUrl": "/"
+      }
+    ],
+    "trendingFilters": []
+  },
+  "gaming": {
+    "sections": [
+      { "type": "banner", "enabled": true, "sortOrder": 1 },
+      { "type": "featured_brands", "enabled": true, "sortOrder": 2 },
+      { "type": "trending_filters", "enabled": true, "sortOrder": 3 },
+      { "type": "product_listing", "enabled": true, "sortOrder": 4 }
+    ],
+    "banners": [
+      {
+        "imageUrl": "https://placehold.co/1920x600/180828/ec4899?text=LAPTOP+GAMING+SIEUKHUNG",
+        "title": "Laptop Gaming Siêu Khủng",
+        "subtitle": "Trải nghiệm mượt mà mọi tựa game AAA mới nhất với card đồ họa RTX thế hệ mới",
+        "linkUrl": "/gaming?sort=price-desc"
+      },
+      {
+        "imageUrl": "https://placehold.co/1920x600/030712/38bdf8?text=LENOVO+LEGION+CHIEN+BINH",
+        "title": "Lenovo Legion - Chiến binh bền bỉ",
+        "subtitle": "Dòng laptop gaming hiệu năng cực đỉnh, tản nhiệt tối tân",
+        "linkUrl": "/gaming?brand=lenovo"
+      }
+    ],
+    "trendingFilters": [
+      { "label": "ASUS ROG", "queryParams": "brand=asus" },
+      { "label": "Lenovo Legion", "queryParams": "brand=lenovo" },
+      { "label": "MSI Katana", "queryParams": "brand=msi" },
+      { "label": "Dưới 30 triệu", "queryParams": "maxPrice=30000000" },
+      { "label": "Màn hình 165Hz+", "queryParams": "spec_display=165Hz" }
+    ]
+  },
+  "ultrabook": {
+    "sections": [
+      { "type": "banner", "enabled": true, "sortOrder": 1 },
+      { "type": "featured_brands", "enabled": true, "sortOrder": 2 },
+      { "type": "trending_filters", "enabled": true, "sortOrder": 3 },
+      { "type": "product_listing", "enabled": true, "sortOrder": 4 }
+    ],
+    "banners": [
+      {
+        "imageUrl": "https://placehold.co/1920x600/f8fafc/0f172a?text=ULTRABOOK+MONG+NHE+AI",
+        "title": "Ultrabook Sang Trọng - Mỏng Nhẹ AI",
+        "subtitle": "Hiệu năng cực đỉnh trong thiết kế siêu mỏng và thời lượng pin cực dài",
+        "linkUrl": "/ultrabook?sort=price-desc"
+      }
+    ],
+    "trendingFilters": [
+      { "label": "Apple MacBook Air", "queryParams": "brand=apple" },
+      { "label": "ASUS Zenbook", "queryParams": "brand=asus" },
+      { "label": "Dell XPS", "queryParams": "brand=dell" },
+      { "label": "Màn hình OLED", "queryParams": "spec_display=OLED" }
+    ]
+  },
+  "business": {
+    "sections": [
+      { "type": "banner", "enabled": true, "sortOrder": 1 },
+      { "type": "featured_brands", "enabled": true, "sortOrder": 2 },
+      { "type": "trending_filters", "enabled": true, "sortOrder": 3 },
+      { "type": "product_listing", "enabled": true, "sortOrder": 4 }
+    ],
+    "banners": [
+      {
+        "imageUrl": "https://placehold.co/1920x600/1e293b/ffffff?text=LAPTOP+DOANH+NHAN",
+        "title": "Laptop Doanh Nhân Cao Cấp",
+        "subtitle": "Bảo mật tuyệt đối, bền bỉ chuẩn quân đội",
+        "linkUrl": "/business?sort=price-desc"
+      }
+    ],
+    "trendingFilters": [
+      { "label": "ThinkPad X1 Carbon", "queryParams": "search=Carbon" },
+      { "label": "Dell Latitude", "queryParams": "brand=dell" },
+      { "label": "HP EliteBook", "queryParams": "brand=hp" }
+    ]
+  },
+  "student": {
+    "sections": [
+      { "type": "banner", "enabled": true, "sortOrder": 1 },
+      { "type": "featured_brands", "enabled": true, "sortOrder": 2 },
+      { "type": "trending_filters", "enabled": true, "sortOrder": 3 },
+      { "type": "product_listing", "enabled": true, "sortOrder": 4 }
+    ],
+    "banners": [
+      {
+        "imageUrl": "https://placehold.co/1920x600/eff6ff/1e3a8a?text=LAPTOP+SINH+VIEN",
+        "title": "Laptop Sinh Viên - Học Tập & Làm Việc",
+        "subtitle": "Cấu hình tối ưu, giá cả phù hợp cùng nhiều chương trình khuyến mãi ưu đãi học sinh sinh viên",
+        "linkUrl": "/student?maxPrice=25000000"
+      }
+    ],
+    "trendingFilters": [
+      { "label": "Dưới 20 triệu", "queryParams": "maxPrice=20000000" },
+      { "label": "Dell Inspiron", "queryParams": "brand=dell" },
+      { "label": "Lenovo IdeaPad", "queryParams": "brand=lenovo" }
+    ]
+  },
+  "creator": {
+    "sections": [
+      { "type": "banner", "enabled": true, "sortOrder": 1 },
+      { "type": "featured_brands", "enabled": true, "sortOrder": 2 },
+      { "type": "trending_filters", "enabled": true, "sortOrder": 3 },
+      { "type": "product_listing", "enabled": true, "sortOrder": 4 }
+    ],
+    "banners": [
+      {
+        "imageUrl": "https://placehold.co/1920x600/09090b/a1a1aa?text=LAPTOP+CREATOR",
+        "title": "Laptop Đồ Họa & Sáng Tạo Nội Dung",
+        "subtitle": "Màn hình chuẩn màu, hiệu năng CPU & GPU khủng để xử lý mượt mà các tác vụ render, dựng hình",
+        "linkUrl": "/creator?sort=price-desc"
+      }
+    ],
+    "trendingFilters": [
+      { "label": "MacBook Pro M4", "queryParams": "brand=apple" },
+      { "label": "Dell Precision", "queryParams": "brand=dell" },
+      { "label": "Màn hình 3K/4K", "queryParams": "spec_display=3.2K" }
+    ]
+  }
+}
