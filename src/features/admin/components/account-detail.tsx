@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
+import { vi } from "date-fns/locale";
 import {
   ArrowLeftIcon, BanIcon, CalendarIcon, CheckCircle2Icon, ClockIcon,
   KeyIcon, MailIcon, MapPinIcon, PackageIcon, PhoneIcon,
@@ -38,12 +39,12 @@ function getInitials(name: string | null, email: string) {
 
 function formatDate(value: string | null | undefined) {
   if (!value) return "-";
-  return format(new Date(value), "MMM d, yyyy HH:mm");
+  return format(new Date(value), "dd/MM/yyyy HH:mm", { locale: vi });
 }
 
 function formatShortDate(value: string | null | undefined) {
   if (!value) return "-";
-  return format(new Date(value), "MMM d, yyyy");
+  return format(new Date(value), "dd/MM/yyyy", { locale: vi });
 }
 
 

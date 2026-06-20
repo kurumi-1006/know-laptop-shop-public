@@ -62,6 +62,7 @@ import { EMPTY_STAFF_FORM, SEARCH_DEBOUNCE_MS, SKELETON_ROW_COUNT } from "@/feat
 import { PAGE_SIZE_OPTIONS } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 import {
   BanIcon,
   CheckCircle2Icon,
@@ -108,7 +109,7 @@ function getInitials(name: string | null, email: string) {
 
 function relativeDate(value: string | null) {
   if (!value) return "Chưa từng";
-  return formatDistanceToNow(new Date(value), { addSuffix: true });
+  return formatDistanceToNow(new Date(value), { addSuffix: true, locale: vi });
 }
 
 export function AccountManagement({ kind }: { kind: AccountKind }) {

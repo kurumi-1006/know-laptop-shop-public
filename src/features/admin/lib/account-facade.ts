@@ -152,26 +152,6 @@ class SetBanCommand implements AccountCommand {
       });
     }
 
-    if (this.banned) {
-      const pendingOrders = await transaction.orders.findMany({
-        where: {
-          userId: this.target.id,
-          status: OrderStatus.pending,
-          paymentStatus: { not: "paid" },
-        },
-        select: { id: true },
-        orderBy: { id: "asc" },
-      });
-
-      for (const order of pendingOrders) {
-        await cancelOrderAndReleaseResources(transaction, order.id, {
-          userId: this.target.id,
-          allowedStatuses: [OrderStatus.pending],
-          paymentStatuses: ["unpaid", "failed"],
-        });
-      }
-    }
-
     return user;
   }
 }
@@ -503,6 +483,54 @@ export class AccountManagementFacade {
             state,
           );
 
-    return prisma.$transaction((transaction) => command.execute(transaction));
+    const updatedAccount = await prisma.$transaction(
+      (transaction) => command.execute(transaction),
+      { timeout: 30000 },
+    );
+
+    if (result.data.action === "set-ban" && result.data.banned) {
+      await this.cancelPendingOrders(userId);
+    }
+
+    return updatedAccount;
+  }
+
+  private async cancelPendingOrders(userId: string) {
+    try {
+      const pendingOrders = await prisma.orders.findMany({
+        where: {
+          userId,
+          status: OrderStatus.pending,
+          paymentStatus: { in: ["unpaid", "failed"] },
+        },
+        select: { id: true },
+        orderBy: { id: "asc" },
+      });
+
+      for (const order of pendingOrders) {
+        try {
+          await prisma.$transaction(
+            (transaction) =>
+              cancelOrderAndReleaseResources(transaction, order.id, {
+                userId,
+                allowedStatuses: [OrderStatus.pending],
+                paymentStatuses: ["unpaid", "failed"],
+              }),
+            { timeout: 30000 },
+          );
+        } catch (error) {
+          console.error("Unable to cancel order after account ban", {
+            userId,
+            orderId: order.id,
+            error,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Unable to list pending orders after account ban", {
+        userId,
+        error,
+      });
+    }
   }
 }

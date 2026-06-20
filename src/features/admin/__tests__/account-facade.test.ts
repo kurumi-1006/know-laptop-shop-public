@@ -28,6 +28,8 @@ import {
   AccountAccessError,
 } from "../lib/account-facade";
 
+type MockTransactionCallback = (transaction: typeof prisma) => unknown;
+
 describe("AccountManagementFacade", () => {
   let facade: AccountManagementFacade;
   const adminActor = { id: "admin-1", role: "admin" };
@@ -277,7 +279,7 @@ describe("AccountManagementFacade", () => {
         banned: false,
       });
       (prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
-        async (fn: Function) => fn(prisma)
+        async (fn: MockTransactionCallback) => fn(prisma)
       );
       (prisma.user.update as ReturnType<typeof vi.fn>).mockResolvedValue({
         id: "cust-1",
@@ -298,6 +300,41 @@ describe("AccountManagementFacade", () => {
       expect(result).toBeDefined();
     });
 
+    it("vẫn khóa tài khoản khi không thể xử lý đơn hàng chờ", async () => {
+      (prisma.user.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
+        id: "cust-1",
+        role: "customer",
+        banned: false,
+      });
+      (prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
+        async (fn: MockTransactionCallback) => fn(prisma),
+      );
+      (prisma.user.update as ReturnType<typeof vi.fn>).mockResolvedValue({
+        id: "cust-1",
+        banned: true,
+      });
+      (prisma.session.deleteMany as ReturnType<typeof vi.fn>).mockResolvedValue({
+        count: 1,
+      });
+      (prisma.orders.findMany as ReturnType<typeof vi.fn>).mockRejectedValue(
+        new Error("Database timeout"),
+      );
+      const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      await expect(
+        facade.updateAccount(adminActor, "cust-1", {
+          action: "set-ban",
+          banned: true,
+        }),
+      ).resolves.toMatchObject({ banned: true });
+
+      expect(consoleError).toHaveBeenCalledWith(
+        "Unable to list pending orders after account ban",
+        expect.objectContaining({ userId: "cust-1" }),
+      );
+      consoleError.mockRestore();
+    });
+
     it("cho phép admin mở khóa tài khoản customer", async () => {
       (prisma.user.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
         id: "cust-1",
@@ -305,7 +342,7 @@ describe("AccountManagementFacade", () => {
         banned: true,
       });
       (prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
-        async (fn: Function) => fn(prisma)
+        async (fn: MockTransactionCallback) => fn(prisma)
       );
       (prisma.user.update as ReturnType<typeof vi.fn>).mockResolvedValue({
         id: "cust-1",
